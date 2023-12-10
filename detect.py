@@ -10,13 +10,13 @@ def transformer_opt(opt):
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weight', type=str, default='runs/train/yolov8s-ACfpnPlusPro-10.22/weights/yolov8s.pt', help='training model path')
+    parser.add_argument('--weight', type=str, default='runs/train/ACF-YOLO/weights/yolov8s.pt', help='training model path')
     parser.add_argument('--source', type=str, default='C:/dataset/images/test', help='source directory for images or videos')
     parser.add_argument('--conf', type=float, default=0.25, help='object confidence threshold for detection')
-    parser.add_argument('--iou', type=float, default=0.1, help='intersection over union (IoU) threshold for NMS')
+    parser.add_argument('--iou', type=float, default=0.5, help='intersection over union (IoU) threshold for NMS')
     parser.add_argument('--mode', type=str, default='predict', choices=['predict', 'track'], help='predict mode or track mode')
     parser.add_argument('--project', type=str, default='runs/detect', help='project name')
-    parser.add_argument('--name', type=str, default='yolov8s-ACfpnPlusPro-10.22', help='experiment name (project/name)')
+    parser.add_argument('--name', type=str, default='ACF-YOLO', help='experiment name (project/name)')
     parser.add_argument('--show', action="store_true", help='show results if possible')
     parser.add_argument('--save_txt', action="store_true",default=True, help='save results as .txt file')
     parser.add_argument('--save_conf', action="store_true",default=True, help='save results with confidence scores')
