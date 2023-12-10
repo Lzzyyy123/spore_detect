@@ -1,0 +1,16 @@
+# dataset path
+train: C:\dataset\images\train #1303 images   //1299
+val: C:\dataset\images\val #162 images   //160
+test: C:\dataset\images\test #158 images   //160s
+#
+#train: /root/autodl-tmp/dataset/images/train #1299 images
+#val: /root/autodl-tmp/dataset/images/val #160 images
+#test: /root/autodl-tmp/dataset/images/test #160 images
+
+# number of classes
+nc: 3
+
+# class names
+
+names: ['normal','unnormal','empty']
+
