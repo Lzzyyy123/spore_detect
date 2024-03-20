@@ -25,9 +25,8 @@ class Colors:
         """Initialize colors as hex = matplotlib.colors.TABLEAU_COLORS.values()."""
         # hexs = ('FF3838', 'FF9D97', 'FF701F', 'FFB21D', 'CFD231', '48F90A', '92CC17', '3DDB86', '1A9334', '00D4BB',
         #         '2C99A8', '00C2FF', '344593', '6473FF', '0018EC', '8438FF', '520085', 'CB38FF', 'FF95C8', 'FF37C7')
-
         hexs = ('00FF00', 'FF0000', '0000FF', 'FFB21D', 'CFD231', '48F90A', '92CC17', '3DDB86', '1A9334', '00D4BB',
-                '2C99A8', '00C2FF', '344593', '6473FF', '0018EC', '8438FF', '520085', 'CB38FF', 'FF95C8', 'FF37C7')
+        '2C99A8', '00C2FF', '344593', '6473FF', '0018EC', '8438FF', '520085', 'CB38FF', 'FF95C8', 'FF37C7')
         self.palette = [self.hex2rgb(f'#{c}') for c in hexs]
         self.n = len(self.palette)
         self.pose_palette = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102], [230, 230, 0], [255, 153, 255],
@@ -56,6 +55,7 @@ class Annotator:
         assert im.data.contiguous, 'Image not contiguous. Apply np.ascontiguousarray(im) to Annotator() input images.'
         non_ascii = not is_ascii(example)  # non-latin labels, i.e. asian, arabic, cyrillic
         self.pil = pil or non_ascii
+        self.pil = True
         if self.pil:  # use PIL
             self.pil_9_2_0_check = check_version(pil_version, '9.2.0')  # deprecation check_test
             self.im = im if isinstance(im, Image.Image) else Image.fromarray(im)
@@ -82,7 +82,7 @@ class Annotator:
         if isinstance(box, torch.Tensor):
             box = box.tolist()
         if self.pil or not is_ascii(label):
-            self.draw.rectangle(box, width=self.lw, outline=color)  # box 画标记方框
+            self.draw.rectangle(box, width=3, outline=color)  # box 画标记方框
             if label:
                 if self.pil_9_2_0_check:
                     _, _, w, h = self.font.getbbox(label)  # text width, height (New)

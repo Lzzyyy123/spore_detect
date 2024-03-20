@@ -14,12 +14,12 @@ from .ops_dcnv3.modules import DCNv3, DCNv3_DyHead
 from .orepa import *
 from ultralytics.yolo.utils.torch_utils import make_divisible
 
-__all__ = ['DyHeadBlock', 'DyHeadBlockWithDCNV3', 'Fusion', 'FasterCSP', 'C3_Faster', 'C3_ODConv', 'C2f_ODConv', 'Partial_conv3', 'C2f_Faster_EMA', 'C3_Faster_EMA', 'C2f_DBB',
+__all__ = ['DyHeadBlock', 'DyHeadBlockWithDCNV3', 'Fusion', 'FasterCSP', 'C2f_Faster','C3_Faster', 'C3_ODConv', 'C2f_ODConv', 'Partial_conv3', 'C2f_Faster_EMA', 'C3_Faster_EMA', 'C2f_DBB',
            'GSConv', 'VoVGSCSP', 'VoVGSCSPC', 'C2f_CloAtt', 'C3_CloAtt', 'SCConv', 'C3_SCConv', 'C2f_SCConv', 'ScConv', 'C3_ScConv', 'C2f_ScConv',
            'LAWDS', 'EMSConv', 'EMSConvP', 'C3_EMSC', 'C3_EMSCP', 'C2f_EMSC', 'C2f_EMSCP', 'RCSOSA', 'C3_KW', 'C2f_KW',
            'C3_DySnakeConv', 'C2f_DySnakeConv', 'DCNv2', 'C3_DCNv2', 'C2f_DCNv2', 'DCNV3_YOLO', 'C3_DCNv3', 'C2f_DCNv3', 'FocalModulation',
            'C3_OREPA', 'C2f_OREPA', 'C3_DBB', 'C3_REPVGGOREPA', 'C2f_REPVGGOREPA', 'C3_DCNv2_Dynamic', 'C2f_DCNv2_Dynamic',
-           'SimFusion_3in', 'SimFusion_4in', 'IFM', 'InjectionMultiSum_Auto_pool', 'PyramidPoolAgg', 'AdvPoolFusion', 'TopBasicLayer','PConv','ASFF_2','ASFF_3','ContextGuidedBlock_Down','involution']
+           'SimFusion_3in', 'SimFusion_4in', 'IFM', 'InjectionMultiSum_Auto_pool', 'PyramidPoolAgg', 'AdvPoolFusion', 'TopBasicLayer','PConv','ASFF_2','ASFF_3','ContextGuidedBlock_Down','involution','CSPStage']
 
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     """Pad to 'same' shape outputs."""
@@ -480,7 +480,13 @@ class FasterCSP(C2f):
         super().__init__(c1, c2, n, shortcut, g, e)
         self.m = nn.ModuleList(Faster_Block(self.c, self.c) for _ in range(n))
 
+
 ######################################## Faster_CSP end ########################################
+
+class C2f_Faster(C2f):
+    def __init__(self, c1, c2, n=1, shortcut=False, g=1, e=0.5):
+        super().__init__(c1, c2, n, shortcut, g, e)
+        self.m = nn.ModuleList(Faster_Block(self.c, self.c) for _ in range(n))
 
 ######################################## C2f-OdConv begin ########################################
 
@@ -2264,3 +2270,103 @@ class involution(nn.Module):
 
 
 ######################################## Involution end ########################################
+
+######################################## DAMO-YOLO GFPN start ########################################
+
+class BasicBlock_3x3_Reverse(nn.Module):
+    def __init__(self,
+                 ch_in,
+                 ch_hidden_ratio,
+                 ch_out,
+                 shortcut=True):
+        super(BasicBlock_3x3_Reverse, self).__init__()
+        assert ch_in == ch_out
+        ch_hidden = int(ch_in * ch_hidden_ratio)
+        self.conv1 = Conv(ch_hidden, ch_out, 3, s=1)
+        self.conv2 = RepConv(ch_in, ch_hidden, 3, s=1)
+        self.shortcut = shortcut
+
+    def forward(self, x):
+        y = self.conv2(x)
+        y = self.conv1(y)
+        if self.shortcut:
+            return x + y
+        else:
+            return y
+
+class SPP(nn.Module):
+    def __init__(
+        self,
+        ch_in,
+        ch_out,
+        k,
+        pool_size
+    ):
+        super(SPP, self).__init__()
+        self.pool = []
+        for i, size in enumerate(pool_size):
+            pool = nn.MaxPool2d(kernel_size=size,
+                                stride=1,
+                                padding=size // 2,
+                                ceil_mode=False)
+            self.add_module('pool{}'.format(i), pool)
+            self.pool.append(pool)
+        self.conv = Conv(ch_in, ch_out, k)
+
+    def forward(self, x):
+        outs = [x]
+
+        for pool in self.pool:
+            outs.append(pool(x))
+        y = torch.cat(outs, axis=1)
+
+        y = self.conv(y)
+        return y
+
+class CSPStage(nn.Module):
+    def __init__(self,
+                 ch_in,
+                 ch_out,
+                 n,
+                 block_fn='BasicBlock_3x3_Reverse',
+                 ch_hidden_ratio=1.0,
+                 act='silu',
+                 spp=False):
+        super(CSPStage, self).__init__()
+
+        split_ratio = 2
+        ch_first = int(ch_out // split_ratio)
+        ch_mid = int(ch_out - ch_first)
+        self.conv1 = Conv(ch_in, ch_first, 1)
+        self.conv2 = Conv(ch_in, ch_mid, 1)
+        self.convs = nn.Sequential()
+
+        next_ch_in = ch_mid
+        for i in range(n):
+            if block_fn == 'BasicBlock_3x3_Reverse':
+                self.convs.add_module(
+                    str(i),
+                    BasicBlock_3x3_Reverse(next_ch_in,
+                                           ch_hidden_ratio,
+                                           ch_mid,
+                                           shortcut=True))
+            else:
+                raise NotImplementedError
+            if i == (n - 1) // 2 and spp:
+                self.convs.add_module('spp', SPP(ch_mid * 4, ch_mid, 1, [5, 9, 13]))
+            next_ch_in = ch_mid
+        self.conv3 = Conv(ch_mid * n + ch_first, ch_out, 1)
+
+    def forward(self, x):
+        y1 = self.conv1(x)
+        y2 = self.conv2(x)
+
+        mid_out = [y1]
+        for conv in self.convs:
+            y2 = conv(y2)
+            mid_out.append(y2)
+        y = torch.cat(mid_out, axis=1)
+        y = self.conv3(y)
+        return y
+
+######################################## DAMO-YOLO GFPN end ########################################

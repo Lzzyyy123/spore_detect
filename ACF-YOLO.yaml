@@ -44,7 +44,7 @@ head:
   - [-1, 3, node_mode, [head_channel]] # 32
   - [20, 1, Conv, [head_channel, 3, 2]] # 33
   - [32, 1, Conv, [head_channel, 3, 2]] # 34
-  - [[-1, 12, 33], 1, Fusion, [fusion_mode]] # 35
+  - [[-1, 12, 29, 33], 1, Fusion, [fusion_mode]] # 35
   - [-1, 3, node_mode, [head_channel]] # 36
 
   - [[27, 32, 36], 1, Detect, [nc]]  # Detect(P3, P4, P5)
