@@ -22,7 +22,7 @@ def parse_opt():
     parser.add_argument('--save_json', action="store_true", help='save results to JSON file')
     parser.add_argument('--save_hybrid', action="store_true", help='save hybrid version of labels (labels + additional predictions)')
     parser.add_argument('--conf', type=float, default=0.001, help='object confidence threshold for detection (0.001 in val)')
-    parser.add_argument('--iou', type=float, default=0.7, help='intersection over union (IoU) threshold for NMS')
+    parser.add_argument('--iou', type=float, default=0.5, help='intersection over union (IoU) threshold for NMS')
     parser.add_argument('--max_det', type=int, default=300, help='maximum number of detections per image')
     parser.add_argument('--half', action="store_true", help='use half precision (FP16)')
     parser.add_argument('--dnn', action="store_true", help='use OpenCV DNN for ONNX inference')
