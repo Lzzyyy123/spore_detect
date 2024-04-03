@@ -33,9 +33,9 @@ ACF-YOLOv8s: an Enhanced YOLOv8 Model for Detection of Fungal Spores with Variou
   dataset/data.yaml
   ```
 
-### Val
+### Evaluation
 
-run val.py or 
+To validate the model, run val.py or 
 
 cli:
 
@@ -49,19 +49,28 @@ results in:
 runs/val/ACF-YOLO
 ```
 
-### Train
+### Training
 
-run train.py or
+To train a model, run train.py or
 
 cli:
 
 ```
-python val.py
+python train.py
 ```
 
 results in:
 
 ```
 runs/train/ACF-YOLO
+```
+
+## Open Source
+
+A few files in this repository are modified from the following open-source implementations:
+
+```
+https://github.com/ultralytics/ultralytics.git
+https://github.com/JevenM/deep-learning-for-image-processing-master.git
 ```
 
