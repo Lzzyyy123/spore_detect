@@ -2,6 +2,8 @@
 
 ACF-YOLOv8s: an Enhanced YOLOv8 Model for Detection of Fungal Spores with Various Morphological Variants
 
+![](C:\Users\Lzy\OneDrive\桌面\ACF\234.png)
+
 ## Getting Started
 
 ### Installation
