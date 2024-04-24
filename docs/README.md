@@ -1,6 +1,6 @@
 # ACF-YOLOv8s
 
-ACF-YOLOv8s: an Enhanced YOLOv8 Model for Detection of Fungal Spores with Various Morphological Variants
+ACF-YOLOv8s: an Enhanced YOLOv8 Model for Detection of Sporangia of Plasmopara viticola with Various Morphological Variants
 
 <img src="234.png" style="zoom: 80%;" />
 
