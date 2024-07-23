@@ -278,7 +278,7 @@ def _log_model(experiment, trainer):
     experiment.log_model(
         model_name,
         file_or_folder=str(trainer.best),
-        file_name='yolov8s.pt',
+        file_name='best.pt',
         overwrite=True,
     )
 

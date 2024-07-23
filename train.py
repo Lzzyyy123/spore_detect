@@ -28,20 +28,20 @@ def transformer_opt(opt):
     return opt
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--yaml', type=str, default='ACF-YOLO.yaml', help='model.yaml path')
+    parser.add_argument('--yaml', type=str, default='AFM-YOLOv8s.yaml', help='model.yaml path')
     parser.add_argument('--weight', type=str, default='', help='pretrained model path')
     parser.add_argument('--cfg', type=str, default='hyp.yaml', help='hyperparameters path')
     parser.add_argument('--data', type=str, default='dataset/data.yaml', help='data yaml path')
     parser.add_argument('--epochs', type=int, default=300, help='number of epochs to train for')
     parser.add_argument('--patience', type=int, default=100, help='EarlyxStopping patience (epochs without improvement)')
     parser.add_argument('--unamp', action='store_true', default=True,help='Unuse Automatic Mixed Precision (AMP) training')
-    parser.add_argument('--batch', type=int, default=16, help='number of images per batch (-1 for AutoBatch)')
+    parser.add_argument('--batch', type=int, default=8, help='number of images per batch (-1 for AutoBatch)')
     parser.add_argument('--imgsz', type=int, default=640, help='size of input images as integer')
     parser.add_argument('--cache', type=str, nargs='?', const='ram', help='image --cache ram /disk')
     parser.add_argument('--device', type=str, default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--workers', type=int, default=4, help='max dataloader workers (per RANK in DDP mode)')
-    parser.add_argument('--project', type=str, default=ROOT / 'runs/train', help='save to project/name')
-    parser.add_argument('--name', type=str, default='ACF-YOLO', help='save to project/name')
+    parser.add_argument('--project', type=str, default=ROOT /'runs/train', help='save to project/name')
+    parser.add_argument('--name', type=str, default='AFM-YOLOv8s', help='save to project/name')
     parser.add_argument('--resume', type=str, default='', help='resume training from last checkpoint')
     parser.add_argument('--optimizer', type=str,
                         choices=['SGD', 'Adam', 'Adamax', 'NAdam', 'RAdam', 'AdamW', 'RMSProp', 'auto'], default='SGD',
@@ -72,7 +72,6 @@ def parse_opt():
     parser.add_argument('--dropout', type=float, default=0.0, help='use dropout regularization (classify train only)')
 
     return parser.parse_known_args()[0]
-
 
 class YOLOV8(YOLO):
     '''

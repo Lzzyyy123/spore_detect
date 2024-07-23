@@ -364,7 +364,7 @@ class ModelEMA:
             copy_attr(self.ema, model, include, exclude)
 
 
-def strip_optimizer(f: Union[str, Path] = 'yolov8s.pt', s: str = '') -> None:
+def strip_optimizer(f: Union[str, Path] = 'best.pt', s: str = '') -> None:
     """
     Strip optimizer from 'f' to finalize training, optionally save as 's'.
 
@@ -496,7 +496,7 @@ class EarlyStopping:
         stop = delta >= self.patience  # stop training if patience exceeded
         if stop:
             LOGGER.info(f'Stopping training early as no improvement observed in last {self.patience} epochs. '
-                        f'Best results observed at epoch {self.best_epoch}, best model saved as yolov8s.pt.\n'
+                        f'Best results observed at epoch {self.best_epoch}, best model saved as best.pt.\n'
                         f'To update EarlyStopping(patience={self.patience}) pass a new patience value, '
                         f'i.e. `patience=300` or use `patience=0` to disable EarlyStopping.')
         return stop

@@ -8,16 +8,15 @@ def transformer_opt(opt):
     del opt['weight']
     return opt
 
-
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weight', type=str, default='ACF-YOLO.pt', help='training model path')
+    parser.add_argument('--weight', type=str, default=r"AFM-YOLOv8s.pt", help='training model path')
     parser.add_argument('--data', type=str, default='dataset/data.yaml', help='data yaml path')
     parser.add_argument('--imgsz', type=int, default=640, help='size of input images as integer')
     parser.add_argument('--batch', type=int, default=1, help='number of images per batch (-1 for AutoBatch)')
     parser.add_argument('--split', type=str, default='test', choices=['train', 'val', 'test'], help='dataset split to use for validation, i.e. val, test or train')
     parser.add_argument('--project', type=str, default='runs/val', help='project name')
-    parser.add_argument('--name', type=str, default='ACF-YOLO', help='experiment name (project/name)')
+    parser.add_argument('--name', type=str, default='AFM-YOLOv8s', help='experiment name (project/name)')
     parser.add_argument('--save_txt', action="store_true", help='save results as .txt filqqe')
     parser.add_argument('--save_json', action="store_true", help='save results to JSON file')
     parser.add_argument('--save_hybrid', action="store_true", help='save hybrid version of labels (labels + additional predictions)')
