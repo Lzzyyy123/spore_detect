@@ -1,8 +1,8 @@
-# ACF-YOLOv8s
+# AFM-YOLOv8s
 
-ACF-YOLOv8s: an Enhanced YOLOv8 Model for Detection of Sporangia of Plasmopara viticola with Various Morphological Variants
+**AFM-YOLOv8s: an Accurate, Fast and Highly Robust Model for Detection of Fungal Spores with Various Morphological Variants** 
 
-<img src="234.png" style="zoom: 80%;" />
+<img src="ACFFPN.png" style="zoom: 80%;" />
 
 ## Getting Started
 
@@ -48,7 +48,7 @@ python val.py
 results in:
 
 ```
-runs/val/ACF-YOLO
+runs/val/AFM-YOLOv8s
 ```
 
 ### Training
@@ -64,7 +64,7 @@ python train.py
 results in:
 
 ```
-runs/train/ACF-YOLO
+runs/train/AFM-YOLOv8s
 ```
 
 ## Open Source
